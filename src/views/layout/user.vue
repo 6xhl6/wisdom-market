@@ -2,7 +2,7 @@
   <div class="user">
     <div class="head-page" v-if="isLogin">
       <div class="head-img">
-        <img src="@/assets/default-avatar.png" alt="" />
+        <img :src="detail.avatar_url || defaultAvatar" alt="" />
       </div>
       <div class="info">
         <div class="mobile">{{ detail.mobile }}</div>
@@ -15,7 +15,7 @@
 
     <div v-else class="head-page" @click="$router.push('/login')">
       <div class="head-img">
-        <img src="@/assets/default-avatar.png" alt="" />
+        <img :src="defaultAvatar" alt="" />
       </div>
       <div class="info">
         <div class="mobile">未登录</div>
@@ -26,7 +26,7 @@
     <div class="my-asset">
       <div class="asset-left">
         <div class="asset-left-item">
-          <span>{{ detail.pay_money || 0 }}</span>
+          <span>{{ detail.balance || 0 }}</span>
           <span>账户余额</span>
         </div>
         <div class="asset-left-item">
@@ -102,16 +102,20 @@
 
 <script>
 import { getUserInfoDetail } from '@/api/userInfo.js'
+import defaultAvatar from '@/assets/default-avatar.png'
 export default {
   name: 'UserPage',
   data () {
     return {
-      detail: {}
+      detail: {},
+      defaultAvatar
     }
   },
-  created () {
+  async created () {
     if (this.isLogin) {
-      this.getUserInfoDetail()
+      await this.getUserInfoDetail()
+      console.log(this.detail)
+      console.log(this.detail.avatar_url)
     }
   },
   computed: {
@@ -154,8 +158,7 @@ export default {
 
 .head-page {
   height: 130px;
-  background: url("http://cba.itlike.com/public/mweb/static/background/user-header2.png");
-  background-size: cover;
+  background: linear-gradient(135deg, #e74c3c, #c21401);
   display: flex;
   align-items: center;
   .head-img {
