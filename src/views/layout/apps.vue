@@ -22,8 +22,8 @@
         </ul>
       </div>
       <div class="right">
-        <div @click="$router.push(`/searchlist?categoryId=${item.category_id}`)" v-for="item in list[activeIndex]?.children" :key="item.category_id" class="cate-goods">
-          <img :src="item.image?.external_url" alt="">
+        <div @click="$router.push(`/searchlist?categoryId=${item.category_id}`)" v-for="item in (list[activeIndex] && list[activeIndex].children)" :key="item.category_id" class="cate-goods">
+          <img :src="item.image && item.image.external_url" alt="">
           <p>{{ item.name }}</p>
         </div>
       </div>
