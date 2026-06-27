@@ -2,7 +2,8 @@
   <div class="user">
     <div class="head-page" v-if="isLogin">
       <div class="head-img">
-        <img :src="detail.avatar_url || defaultAvatar" alt="" />
+        <!-- 后端未返回avatar_url,使用默认头像 -->
+        <img :src="defaultAvatar" alt="" />
       </div>
       <div class="info">
         <div class="mobile">{{ detail.mobile }}</div>
