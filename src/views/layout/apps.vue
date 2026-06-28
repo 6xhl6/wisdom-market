@@ -38,6 +38,11 @@ export default {
   created () {
     this.getCategoryList()
   },
+  // keep-alive 激活时：数据已存在则跳过请求，避免切 tab 后重复请求
+  activated () {
+    if (this.list.length > 0) return
+    this.getCategoryList()
+  },
   data () {
     return {
       list: [],

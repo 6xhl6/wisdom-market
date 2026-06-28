@@ -1,6 +1,8 @@
 <template>
   <div class="layout">
-    <router-view></router-view>
+    <keep-alive :exclude="['CartPage']">
+      <router-view></router-view>
+    </keep-alive>
     <van-tabbar route active-color="#ee0a24" inactive-color="#000">
       <van-tabbar-item to="/home" icon="wap-home-o">首页</van-tabbar-item>
       <van-tabbar-item to="/apps" icon="apps-o">分类页</van-tabbar-item>

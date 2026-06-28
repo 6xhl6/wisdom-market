@@ -76,6 +76,7 @@ module.exports = defineConfig({
 
         {
           // 首页数据接口：轮播图、导航图标网格、猜你喜欢列表
+          // URL 覆盖两种格式：/api/page/detail（直接请求）、index.php?s=/api/page/detail（PHP 前端控制器）
           urlPattern: /\/api\/.*\/?page\/detail/,
           handler: 'StaleWhileRevalidate',
           options: {
@@ -83,6 +84,9 @@ module.exports = defineConfig({
             expiration: {
               maxEntries: 5, // 最多缓存 5 条响应
               maxAgeSeconds: 60 * 30 // 30 分钟后自动清理
+            },
+            cacheableResponse: {
+              statuses: [0, 200] // 0=opaque 跨域响应也允许缓存（生产环境 API 为跨域 smart-shop.itheima.net）
             }
           }
         },
@@ -125,6 +129,9 @@ module.exports = defineConfig({
             expiration: {
               maxEntries: 30,
               maxAgeSeconds: 60 * 60 * 4 // 4 小时后过期
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
             }
           }
         },
@@ -137,6 +144,9 @@ module.exports = defineConfig({
             expiration: {
               maxEntries: 10,
               maxAgeSeconds: 60 * 60 * 24 * 7 // 7 天后过期（服务标签极少变动）
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
             }
           }
         },
@@ -159,6 +169,9 @@ module.exports = defineConfig({
             expiration: {
               maxEntries: 20,
               maxAgeSeconds: 60 * 30 // 30 分钟后过期
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
             }
           }
         },
@@ -172,6 +185,9 @@ module.exports = defineConfig({
             expiration: {
               maxEntries: 5,
               maxAgeSeconds: 60 * 10 // 10 分钟后过期
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
             }
           }
         },

@@ -62,6 +62,11 @@ export default {
   async created () {
     const res = await getHomeData()
     this.homeDataList = res.data.pageData.items
+  },
+  // keep-alive 激活时：数据已存在则跳过请求，避免切 tab 后重复请求
+  activated () {
+    if (this.homeDataList.length > 0) return
+    this.created()
   }
 }
 </script>
