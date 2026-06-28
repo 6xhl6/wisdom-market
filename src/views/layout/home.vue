@@ -60,13 +60,18 @@ export default {
     GoodsItem
   },
   async created () {
-    const res = await getHomeData()
-    this.homeDataList = res.data.pageData.items
+    this.loadHomeData()
   },
   // keep-alive 激活时：数据已存在则跳过请求，避免切 tab 后重复请求
   activated () {
     if (this.homeDataList.length > 0) return
-    this.created()
+    this.loadHomeData()
+  },
+  methods: {
+    async loadHomeData () {
+      const res = await getHomeData()
+      this.homeDataList = res.data.pageData.items
+    }
   }
 }
 </script>
