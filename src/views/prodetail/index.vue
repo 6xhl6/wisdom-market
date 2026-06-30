@@ -149,6 +149,16 @@ export default {
     }
   },
   methods: {
+    async loadDetail () {
+      const res = await getGoodsDetail(this.goodsId)
+      this.goodsData = res.data.detail
+      const commentRes = await getCommentList(this.goodsId, 5)
+      this.commentList = commentRes.data.list
+      const totalRes = await getCommentTotal(this.goodsId)
+      this.commentTotal = totalRes.data.total
+      const serviceRes = await getGoodsService(this.goodsId)
+      this.serviceList = serviceRes.data.list
+    },
     isStockEnough () {
       const isEnough = this.stock >= this.buy_num
       if (!isEnough) {
@@ -207,14 +217,7 @@ export default {
     }
   },
   async created () {
-    const res = await getGoodsDetail(this.goodsId)
-    this.goodsData = res.data.detail
-    const commentRes = await getCommentList(this.goodsId, 5)
-    this.commentList = commentRes.data.list
-    const totalRes = await getCommentTotal(this.goodsId)
-    this.commentTotal = totalRes.data.total
-    const serviceRes = await getGoodsService(this.goodsId)
-    this.serviceList = serviceRes.data.list
+    this.loadDetail()
   }
 }
 </script>
