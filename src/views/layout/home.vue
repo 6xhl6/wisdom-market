@@ -64,7 +64,11 @@ export default {
   },
   // keep-alive 激活时：数据已存在则跳过请求，避免切 tab 后重复请求
   activated () {
-    if (this.homeDataList.length > 0) return
+    if (this.homeDataList.length > 0) {
+      console.log('[keep-alive] ✅ 命中缓存，跳过请求')
+      return
+    }
+    console.log('[keep-alive] ❌ 未命中缓存，请求数据')
     this.loadHomeData()
   },
   methods: {
