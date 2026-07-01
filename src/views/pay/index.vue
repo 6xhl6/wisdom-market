@@ -141,8 +141,6 @@ export default {
       // 获取订单数据
       if (this.mode === 'cart') {
         const { data: { order, personal } } = await checkOrder(this.mode, { cartIds: this.cartIds })
-        console.log(order)
-        console.log(personal)
         this.order = order
         this.personal_info = personal
       } else if (this.mode === 'buyNow') {

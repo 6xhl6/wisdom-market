@@ -6,7 +6,7 @@
     "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy:gitee": "npm run build && git subtree push --prefix=dist gitee pages"
+    "deploy:gitee": "npm run build && git subtree push --prefix=docs gitee pages"
   },
   "dependencies": {
     "@vant/area-data": "^2.1.0",

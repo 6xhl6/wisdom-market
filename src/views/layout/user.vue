@@ -116,8 +116,6 @@ export default {
   async created () {
     if (this.isLogin) {
       await this.getUserInfoDetail()
-      console.log(this.detail)
-      console.log(this.detail.avatar_url)
     }
   },
   computed: {
@@ -131,7 +129,7 @@ export default {
         const { data: { userInfo } } = await getUserInfoDetail()
         this.detail = userInfo
       } catch (error) {
-        console.log(error)
+        // 静默失败
       }
     },
     logout () {

@@ -78,6 +78,9 @@ const ROUTES = [
     cacheName: 'api-region-tree',
     maxEntries: 1
   }
+
+  // 注：交易链路（cart/checkout/order/address/login）不在此列，
+  // 它们不匹配任何缓存路由 → fetch handler 直接放行 → 仅走网络，不写缓存
 ]
 
 // 从请求 URL 中提取 API 路径（s=/api/xxx 格式）
@@ -92,13 +95,10 @@ function findRoute (apiPath) {
 }
 
 // LRU 清理：超出 maxEntries 时删除最旧的条目
-
 async function trimCache (cacheName, maxEntries) {
   const cache = await caches.open(cacheName)
   const keys = await cache.keys()
   if (keys.length >= maxEntries) {
-    // 简单策略：删除第一个（最早缓存的）
-    // 注意：keys() 返回顺序 API 未严格保证，但多数浏览器按插入顺序返回
     const toDelete = keys.slice(0, keys.length - maxEntries + 1)
     for (const req of toDelete) {
       await cache.delete(req)
@@ -107,7 +107,6 @@ async function trimCache (cacheName, maxEntries) {
 }
 
 // StaleWhileRevalidate
-
 async function staleWhileRevalidate ({ request, cacheName, maxEntries }) {
   const cache = await caches.open(cacheName)
   const cachedResponse = await cache.match(request)
@@ -115,7 +114,6 @@ async function staleWhileRevalidate ({ request, cacheName, maxEntries }) {
   // 后台网络请求用于更新缓存
   const networkPromise = fetch(request).then(async (networkResponse) => {
     if (networkResponse && (networkResponse.status === 200 || networkResponse.status === 0)) {
-      // 克隆响应以添加缓存时间标记
       const clonedResponse = networkResponse.clone()
       await trimCache(cacheName, maxEntries)
       await cache.put(request, clonedResponse)
@@ -124,13 +122,12 @@ async function staleWhileRevalidate ({ request, cacheName, maxEntries }) {
   }).catch(() => null)
 
   if (cachedResponse) {
-    console.log('[SW-API]  缓存命中 → ' + request.url.split('?s=')[1])
     return cachedResponse
   }
 
-  console.log('[SW-API]  缓存未命中 → ' + request.url.split('?s=')[1])
   const networkResponse = await networkPromise
   if (networkResponse) return networkResponse
+
   // 网络失败且无缓存 → 返回 503
   return new Response(JSON.stringify({ status: 503, message: 'Network error' }), {
     status: 503,
@@ -139,7 +136,6 @@ async function staleWhileRevalidate ({ request, cacheName, maxEntries }) {
 }
 
 // NetworkFirst
-
 async function networkFirst ({ request, cacheName, maxEntries, networkTimeoutSeconds }) {
   const cache = await caches.open(cacheName)
 
@@ -161,11 +157,9 @@ async function networkFirst ({ request, cacheName, maxEntries, networkTimeoutSec
       await trimCache(cacheName, maxEntries)
       await cache.put(request, clonedResponse)
     }
-    console.log('[SW-API]  网络响应 → ' + request.url.split('?s=')[1])
     return networkResponse
   } catch (err) {
     // 网络超时或失败 → 降级到缓存
-    console.log('[SW-API]  网络超时，降级缓存 → ' + request.url.split('?s=')[1])
     const cachedResponse = await cache.match(request)
     if (cachedResponse) return cachedResponse
     return new Response(JSON.stringify({ status: 503, message: 'Network error' }), {
@@ -181,11 +175,9 @@ async function cacheFirst ({ request, cacheName, maxEntries }) {
   const cachedResponse = await cache.match(request)
 
   if (cachedResponse) {
-    console.log('[SW-API]  CacheFirst 命中 → ' + request.url.split('?s=')[1])
     return cachedResponse
   }
 
-  console.log('[SW-API]  CacheFirst 未命中，取网络 → ' + request.url.split('?s=')[1])
   try {
     const networkResponse = await fetch(request)
     if (networkResponse && (networkResponse.status === 200 || networkResponse.status === 0)) {
@@ -201,26 +193,17 @@ async function cacheFirst ({ request, cacheName, maxEntries }) {
   }
 }
 
-// 缓存清除 — 响应主线程发来的控制指令
-
 // 所有运行时缓存名称（用于批量清除）
 const RUNTIME_CACHE_NAMES = ROUTES.map(r => r.cacheName)
 
 async function clearAllRuntimeCaches () {
-  const results = []
   for (const name of RUNTIME_CACHE_NAMES) {
     try {
-      const deleted = await caches.delete(name)
-      results.push({ name, deleted })
-      if (deleted) {
-        console.log('[SW-API]  已清除缓存：' + name)
-      }
+      await caches.delete(name)
     } catch (e) {
-      console.warn('[SW-API]  清除缓存失败：' + name, e)
-      results.push({ name, deleted: false, error: e.message })
+      // 静默失败
     }
   }
-  return results
 }
 
 // 清除特定名称的缓存（用于选择性清除，如仅清除用户相关）
@@ -228,34 +211,26 @@ async function clearCachesByName (names) {
   for (const name of names) {
     try {
       await caches.delete(name)
-      console.log('[SW-API]  已清除缓存：' + name)
     } catch (e) {
-      console.warn('[SW-API]  清除缓存失败：' + name, e)
+      // 静默失败
     }
   }
 }
 
-// message 事件：主线程 → SW 的控制通道
+// ★ message 事件：主线程 → SW 的控制通道
 self.addEventListener('message', (event) => {
   const { type } = event.data
 
   if (type === 'CLEAR_ALL_CACHES') {
-    // 退出登录 / 手动触发：清除所有运行时 API 缓存
-    console.log('[SW-API]  收到指令：清除全部运行时缓存')
     event.waitUntil(clearAllRuntimeCaches())
   } else if (type === 'SESSION_INIT') {
-    // 新 session 初始化：清除上个 session 的所有运行时缓存
-    console.log('[SW-API]  收到指令：新 Session 初始化，清除旧缓存')
     event.waitUntil(clearAllRuntimeCaches())
   } else if (type === 'CLEAR_USER_CACHES') {
-    // 清除用户敏感缓存（如用户信息、搜索历史）
-    console.log('[SW-API]  收到指令：清除用户相关缓存')
     event.waitUntil(clearCachesByName(['api-user-info', 'api-search']))
   }
 })
 
 // 主 fetch 事件监听器
-
 self.addEventListener('fetch', (event) => {
   const { request } = event
 
@@ -275,8 +250,6 @@ self.addEventListener('fetch', (event) => {
   if (!route) return
 
   // 执行对应缓存策略
-  console.log('[SW-API] ✅ 拦截成功 → ' + apiPath + ' [' + route.strategy + ']')
-
   const strategyMap = {
     StaleWhileRevalidate: staleWhileRevalidate,
     NetworkFirst: networkFirst,

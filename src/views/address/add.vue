@@ -141,7 +141,7 @@ export default {
         this.codeToId = data.codeToId
       }
     } catch (e) {
-      console.error('获取地区数据失败', e)
+      // 静默失败
     }
 
     // 编辑模式：通过 query 参数构建 addressInfo
