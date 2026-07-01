@@ -68,6 +68,16 @@ export default {
     async loadHomeData () {
       const res = await getHomeData()
       this.homeDataList = res.data.pageData.items
+
+      // LCP 优化：API 响应后立即预加载首张轮播图
+      const firstImage = this.homeDataList?.[1]?.data?.[0]?.imgUrl
+      if (firstImage) {
+        const link = document.createElement('link')
+        link.rel = 'preload'
+        link.as = 'image'
+        link.href = firstImage
+        document.head.appendChild(link)
+      }
     }
   }
 }

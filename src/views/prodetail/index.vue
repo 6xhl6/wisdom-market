@@ -152,6 +152,17 @@ export default {
     async loadDetail () {
       const res = await getGoodsDetail(this.goodsId)
       this.goodsData = res.data.detail
+
+      // LCP 优化：API 响应后立即预加载首张轮播图
+      const firstImage = this.goodsData.goods_images?.[0]?.external_url
+      if (firstImage) {
+        const link = document.createElement('link')
+        link.rel = 'preload'
+        link.as = 'image'
+        link.href = firstImage
+        document.head.appendChild(link)
+      }
+
       const commentRes = await getCommentList(this.goodsId, 5)
       this.commentList = commentRes.data.list
       const totalRes = await getCommentTotal(this.goodsId)
