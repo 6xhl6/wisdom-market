@@ -103,6 +103,7 @@
 
 <script>
 import { getUserInfoDetail } from '@/api/userInfo.js'
+import { clearAllRuntimeCaches } from '@/utils/sw-message.js'
 import defaultAvatar from '@/assets/default-avatar.png'
 export default {
   name: 'UserPage',
@@ -144,6 +145,9 @@ export default {
         this.$store.commit('user/setUserInfo', {})
         this.$store.commit('cart/setCartList', [])
         this.detail = {}
+        //   退出登录 → 清除 Service Worker 中所有运行时 API 缓存
+        //   防止下一个登录用户看到上一个用户的缓存数据
+        clearAllRuntimeCaches()
       }).catch(() => {})
     }
   }

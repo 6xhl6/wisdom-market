@@ -24,6 +24,7 @@
  */
 
 import { register } from 'register-service-worker'
+import { initSessionCache } from '@/utils/sw-message.js'
 
 if (process.env.NODE_ENV === 'production') {
   // service-worker.js 由 @vue/cli-plugin-pwa (Workbox) 在构建时自动生成
@@ -38,11 +39,12 @@ if (process.env.NODE_ENV === 'production') {
         '  静态资源：预缓存，离线秒开\n' +
         '  API 数据：按策略分层缓存（Stale-While-Revalidate / Network First / Cache First / Network Only）'
       )
+
+      initSessionCache()
     },
 
-    // ----------------------------------------------------------------
     // ★ SW 注册成功（非首次，缓存已就绪）
-    // ----------------------------------------------------------------
+
     registered (registration) {
       console.log('[PWA] ✅ Service Worker 注册成功，scope:', registration.scope)
 
@@ -52,10 +54,9 @@ if (process.env.NODE_ENV === 'production') {
       }, 1000 * 60 * 60)
     },
 
-    // ----------------------------------------------------------------
-    // ★ 检测到新版本 SW（页面仍在使用旧版本）
-    //    提示用户刷新以获取最新缓存数据
-    // ----------------------------------------------------------------
+    // 检测到新版本 SW（页面仍在使用旧版本）
+    // 提示用户刷新以获取最新缓存数据
+
     updated (registration) {
       console.log('[PWA] 🔔 检测到新版本 Service Worker，等待用户刷新页面激活')
 
@@ -101,9 +102,8 @@ if (process.env.NODE_ENV === 'production') {
       // 3. 浏览器不支持 → 降级到正常网络请求，不影响功能
     },
 
-    // ----------------------------------------------------------------
-    // ★ 离线检测（网络断开，仍能正常使用）
-    // ----------------------------------------------------------------
+    // 离线检测（网络断开，仍能正常使用）
+
     offline () {
       console.log('[PWA] 📡 网络已断开，应用将使用缓存数据运行')
 
@@ -116,9 +116,8 @@ if (process.env.NODE_ENV === 'production') {
       })
     },
 
-    // ----------------------------------------------------------------
-    // ★ 在线恢复
-    // ----------------------------------------------------------------
+    // 在线恢复（网络恢复，仍能正常使用）
+
     online () {
       console.log('[PWA] 🌐 网络已恢复，缓存将在后台静默更新')
     }

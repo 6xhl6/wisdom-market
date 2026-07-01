@@ -83,10 +83,9 @@ module.exports = defineConfig({
           urlPattern: /\/api\/.*\/?page\/detail/,
           handler: 'StaleWhileRevalidate',
           options: {
-            cacheName: 'api-home', // 缓存存储名称（可在 DevTools > Application > Cache Storage 查看）
+            cacheName: 'api-home',
             expiration: {
-              maxEntries: 5, // 最多缓存 5 条响应
-              maxAgeSeconds: 60 * 30 // 30 分钟后自动清理
+              maxEntries: 5
             },
             cacheableResponse: {
               statuses: [0, 200] // 0=opaque 跨域响应也允许缓存（生产环境 API 为跨域 smart-shop.itheima.net）
@@ -100,8 +99,7 @@ module.exports = defineConfig({
           options: {
             cacheName: 'api-goods-detail',
             expiration: {
-              maxEntries: 50, // 最多缓存 50 个商品详情
-              maxAgeSeconds: 60 * 60 * 24 // 24 小时后过期（商品信息通常一天内不变）
+              maxEntries: 50
             },
             cacheableResponse: {
               statuses: [0, 200] // 0=opaque 跨域响应也允许缓存
@@ -115,8 +113,7 @@ module.exports = defineConfig({
           options: {
             cacheName: 'api-category',
             expiration: {
-              maxEntries: 5,
-              maxAgeSeconds: 60 * 60 * 24 * 7 // 7 天后过期
+              maxEntries: 5
             },
             cacheableResponse: {
               statuses: [0, 200]
@@ -130,8 +127,7 @@ module.exports = defineConfig({
           options: {
             cacheName: 'api-comments',
             expiration: {
-              maxEntries: 30,
-              maxAgeSeconds: 60 * 60 * 4 // 4 小时后过期
+              maxEntries: 30
             },
             cacheableResponse: {
               statuses: [0, 200]
@@ -145,8 +141,7 @@ module.exports = defineConfig({
           options: {
             cacheName: 'api-goods-service',
             expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 7 // 7 天后过期（服务标签极少变动）
+              maxEntries: 10
             },
             cacheableResponse: {
               statuses: [0, 200]
@@ -168,10 +163,9 @@ module.exports = defineConfig({
           handler: 'NetworkFirst',
           options: {
             cacheName: 'api-search',
-            networkTimeoutSeconds: 5, // 5 秒超时门限，超时则返回缓存
+            networkTimeoutSeconds: 5,
             expiration: {
-              maxEntries: 20,
-              maxAgeSeconds: 60 * 30 // 30 分钟后过期
+              maxEntries: 20
             },
             cacheableResponse: {
               statuses: [0, 200]
@@ -184,10 +178,9 @@ module.exports = defineConfig({
           handler: 'NetworkFirst',
           options: {
             cacheName: 'api-user-info',
-            networkTimeoutSeconds: 3, // 3 秒超时
+            networkTimeoutSeconds: 3,
             expiration: {
-              maxEntries: 5,
-              maxAgeSeconds: 60 * 10 // 10 分钟后过期
+              maxEntries: 5
             },
             cacheableResponse: {
               statuses: [0, 200]
@@ -211,8 +204,7 @@ module.exports = defineConfig({
           options: {
             cacheName: 'api-region-tree',
             expiration: {
-              maxEntries: 1,
-              maxAgeSeconds: 60 * 60 * 24 * 30 // 30 天后过期
+              maxEntries: 1
             },
             cacheableResponse: {
               statuses: [0, 200]
