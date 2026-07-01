@@ -15,7 +15,7 @@
         <div class="list">
             <div class="list-item" v-for="item in order.goods" :key="item.goods_id">
                 <div class="goods-img">
-                    <img :src="item.goods_image" alt="" loading="lazy">
+                    <img :src="item.goods_image" alt="">
                 </div>
                 <div class="goods-content text-ellipsis-2">
                 {{item.goods_name}}

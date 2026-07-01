@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="empty-cart" v-else>
-      <img src="@/assets/empty.png" alt="" loading="lazy">
+      <img src="@/assets/empty.png" alt="">
       <div class="tips">
         您的购物车是空的, 快去逛逛吧
       </div>

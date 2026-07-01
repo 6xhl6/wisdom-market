@@ -33,7 +33,7 @@
       <div class="list">
         <div class="goods-item" v-for="item in order.goodsList" :key="item.goods_id">
             <div class="left">
-              <img :src="item.goods_image" alt="" loading="lazy" />
+              <img :src="item.goods_image" alt="" />
             </div>
             <div class="right">
               <p class="tit text-ellipsis-2">
