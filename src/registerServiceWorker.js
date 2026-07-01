@@ -39,6 +39,22 @@ if (process.env.NODE_ENV === 'production') {
     },
 
     updated (registration) {
+      // 防抖：1 小时内不重复弹窗
+      // 部分国产浏览器的云加速代理会修改 SW 文件内容，导致每次刷新都误判为"新版本"
+      const DEBOUNCE_KEY = 'sw-update-prompt-time'
+      const DEBOUNCE_MS = 60 * 60 * 1000
+      const lastPrompt = localStorage.getItem(DEBOUNCE_KEY)
+
+      if (lastPrompt && Date.now() - Number(lastPrompt) < DEBOUNCE_MS) {
+        // 防抖期内：静默 skip 让 waiting SW 激活，但不 reload
+        // 不 reload 是为了避免无限循环：代理持续修改 SW → 每次 reload 后再次误检
+        // skipWaiting 后 SW 在下次导航时自然生效，不影响功能
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+        }
+        return
+      }
+
       // 检测到新版本 → 弹窗确认 → 刷新
       import('vant').then(({ Dialog }) => {
         Dialog.confirm({
@@ -47,11 +63,15 @@ if (process.env.NODE_ENV === 'production') {
           confirmButtonText: '立即刷新',
           cancelButtonText: '稍后'
         }).then(() => {
+          localStorage.setItem(DEBOUNCE_KEY, Date.now().toString())
           if (registration.waiting) {
             registration.waiting.postMessage({ type: 'SKIP_WAITING' })
           }
           window.location.reload()
-        }).catch(() => {})
+        }).catch(() => {
+          // 用户点了"稍后"也记录时间，避免短时间反复弹窗
+          localStorage.setItem(DEBOUNCE_KEY, Date.now().toString())
+        })
       })
     },
 
