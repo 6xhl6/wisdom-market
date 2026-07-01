@@ -42,6 +42,9 @@ module.exports = defineConfig({
 
     // Workbox 配置
     workboxOptions: {
+      // ★ 注入跨域 API 拦截器（Workbox 原生路由不匹配 index.php?s=/api/ 格式）
+      importScripts: ['./sw-api-interceptor.js'],
+
       // ----------------------------------------------------------
       // 第一层：Precache 预缓存配置（静态资源自动缓存）
       //
