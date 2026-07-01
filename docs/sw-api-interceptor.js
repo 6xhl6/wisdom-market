@@ -260,14 +260,19 @@ self.addEventListener('fetch', (event) => {
   const route = findRoute(apiPath)
   if (!route) return
 
+  // NetworkOnly → 不拦截，直接放行给浏览器（避免 Network 面板中出现无意义的 SW 条目）
+  if (route.strategy === 'NetworkOnly') {
+    console.log('[SW-API] 🔒 放行（NetworkOnly）→ ' + apiPath)
+    return
+  }
+
   // 执行对应策略
   console.log('[SW-API] ✅ 拦截成功 → ' + apiPath + ' [' + route.strategy + ']')
 
   const strategyMap = {
     StaleWhileRevalidate: staleWhileRevalidate,
     NetworkFirst: networkFirst,
-    CacheFirst: cacheFirst,
-    NetworkOnly: networkOnly
+    CacheFirst: cacheFirst
   }
 
   const handler = strategyMap[route.strategy]
