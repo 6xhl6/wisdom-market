@@ -224,7 +224,9 @@ self.addEventListener('message', (event) => {
   if (type === 'CLEAR_ALL_CACHES') {
     event.waitUntil(clearAllRuntimeCaches())
   } else if (type === 'SESSION_INIT') {
-    event.waitUntil(clearAllRuntimeCaches())
+    // 仅清除用户数据缓存，保留公共内容缓存
+    // 公共缓存（首页/分类/商品/评价）不应随 session 清除，否则缓存命中率归零
+    event.waitUntil(clearCachesByName(['api-user-info', 'api-search']))
   } else if (type === 'CLEAR_USER_CACHES') {
     event.waitUntil(clearCachesByName(['api-user-info', 'api-search']))
   }
