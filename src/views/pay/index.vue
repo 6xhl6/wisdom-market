@@ -33,7 +33,7 @@
       <div class="list">
         <div class="goods-item" v-for="item in order.goodsList" :key="item.goods_id">
             <div class="left">
-              <img :src="item.goods_image" alt="" />
+              <img :src="item.goods_image" alt="" loading="lazy" />
             </div>
             <div class="right">
               <p class="tit text-ellipsis-2">
@@ -186,6 +186,7 @@ export default {
 .pay {
   padding-top: 46px;
   padding-bottom: 46px;
+  min-height: 100vh; //  订单数据异步加载前预留高度
   ::v-deep {
     .van-nav-bar__arrow {
       color: #333;
@@ -223,7 +224,9 @@ export default {
     img {
       display: block;
       width: 80px;
+      height: 80px;
       margin: 10px auto;
+      aspect-ratio: 1 / 1;
     }
   }
   .right {

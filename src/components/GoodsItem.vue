@@ -1,6 +1,6 @@
 <template>
     <div class="goods-item" @click="toDetail(item.goods_id)">
-        <img :src="this.item.goods_image" alt="">
+        <img :src="this.item.goods_image" alt="" loading="lazy">
         <div class="goods-info">
             <p class="goods-desc">{{ item.goods_name }}</p>
             <p class="goods-sales_count">{{ item.goods_sales }}</p>
@@ -39,8 +39,11 @@ export default {
 }
 
 .goods-item img {
+    width: 100px;
     height: 100px;
     display: block;
+    // 明确宽高比让浏览器在图片加载前预留空间
+    aspect-ratio: 1 / 1;
 }
 
 .goods-desc {

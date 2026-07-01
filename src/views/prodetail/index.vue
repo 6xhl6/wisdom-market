@@ -2,9 +2,9 @@
   <div class="prodetail">
     <van-nav-bar fixed title="商品详情页" left-arrow @click-left="$router.go(-1)" />
 
-    <van-swipe :autoplay="3000" @change="onChange">
+    <van-swipe :autoplay="3000" @change="onChange" class="product-swipe">
       <van-swipe-item v-for="(image, index) in this.goodsData.goods_images" :key="index">
-        <img :src="image.external_url" />
+        <img :src="image.external_url" :alt="goodsData.goods_name || '商品图片'" />
       </van-swipe-item>
 
       <template #indicator>
@@ -45,7 +45,7 @@
       <div class="comment-list">
         <div class="comment-item" v-for="item in commentList" :key="item.comment_id">
           <div class="top">
-            <img :src="item.user.avatar_url || defaultAvatarUrl" alt="">
+            <img :src="item.user.avatar_url || defaultAvatarUrl" alt="" loading="lazy">
             <div class="name">{{ item.user.nick_name }}</div>
             <van-rate :size="16" :value="item.score" color="#ffd21e" void-icon="star" void-color="#eee" />
           </div>
@@ -61,9 +61,9 @@
 
     <!-- 商品描述 -->
     <div class="desc">
-      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/kHgx21fZMWwqirkMhawkAw.jpg" alt="">
-      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/0rRMmncfF0kGjuK5cvLolg.jpg" alt="">
-      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/2P04A4Jn0HKxbKYSHc17kw.jpg" alt="">
+      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/kHgx21fZMWwqirkMhawkAw.jpg" alt="商品详情图1" loading="lazy">
+      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/0rRMmncfF0kGjuK5cvLolg.jpg" alt="商品详情图2" loading="lazy">
+      <img src="https://uimgproxy.suning.cn/uimg1/sop/commodity/2P04A4Jn0HKxbKYSHc17kw.jpg" alt="商品详情图3" loading="lazy">
     </div>
 
     <!-- 底部 -->
@@ -230,6 +230,11 @@ export default {
 
   ::v-deep .van-icon-arrow-left {
     color: #333;
+  }
+
+  // 轮播图数据异步加载前预留高度（移动端 375×375 常见比例）
+  .product-swipe {
+    min-height: 375px;
   }
 
   img {

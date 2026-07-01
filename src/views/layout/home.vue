@@ -20,14 +20,16 @@
     </van-swipe>
 
     <!-- 导航 -->
-    <van-grid column-num="5" icon-size="40">
-      <van-grid-item
-        v-for="(item, index) in (homeDataList.length > 3 ? homeDataList[3].data : [])" :key="index"
-        :icon="item.imgUrl"
-        :text="item.text"
-        to="/apps"
-      />
-    </van-grid>
+    <div class="nav-grid">
+      <van-grid column-num="5" icon-size="40">
+        <van-grid-item
+          v-for="(item, index) in (homeDataList.length > 3 ? homeDataList[3].data : [])" :key="index"
+          :icon="item.imgUrl"
+          :text="item.text"
+          to="/apps"
+        />
+      </van-grid>
+    </div>
 
     <!-- 主会场 -->
     <div class="main">
@@ -96,6 +98,9 @@ export default {
 }
 
 // 分类导航部分
+.my-swipe {
+  min-height: 185px; // 轮播图数据异步加载前预留高度
+}
 .my-swipe .van-swipe-item {
   height: 185px;
   color: #fff;
@@ -108,10 +113,21 @@ export default {
   height: 185px;
 }
 
+// 导航网格 — 预留高度防 CLS
+.nav-grid {
+  min-height: 75px;
+}
+
 // 主会场
+.main {
+  min-height: 120px; // ★ CLS fix: 横幅图片加载前预留高度
+}
 .main img {
   display: block;
   width: 100%;
+  // 已知 main.png 尺寸为 425×134，aspect-ratio 让浏览器提前计算高度
+  aspect-ratio: 425 / 134;
+  height: auto;
 }
 
 // 猜你喜欢
@@ -144,6 +160,7 @@ export default {
 
 // 商品样式
 .goods-list {
+  min-height: 300px; // 商品列表异步加载前预留高度
   background-color: #f6f6f6;
 }
 </style>

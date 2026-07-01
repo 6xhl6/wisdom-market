@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="empty-cart" v-else>
-      <img src="@/assets/empty.png" alt="">
+      <img src="@/assets/empty.png" alt="" loading="lazy">
       <div class="tips">
         您的购物车是空的, 快去逛逛吧
       </div>
@@ -119,11 +119,13 @@ export default {
 
 <style lang="less" scoped>
 // 主题 padding
+.cart-box {
+  min-height: 100vh; //  购物车状态判断前预留高度
+}
 .cart {
   padding-top: 46px;
   padding-bottom: 100px;
   background-color: #f5f5f5;
-  min-height: 100vh;
   .card-item {
     display: flex;
     align-items: center;

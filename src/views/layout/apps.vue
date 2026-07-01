@@ -23,7 +23,7 @@
       </div>
       <div class="right">
         <div @click="$router.push(`/searchlist?categoryId=${item.category_id}`)" v-for="item in (list[activeIndex] && list[activeIndex].children)" :key="item.category_id" class="cate-goods">
-          <img :src="item.image && item.image.external_url" alt="">
+          <img :src="item.image && item.image.external_url" alt="" loading="lazy">
           <p>{{ item.name }}</p>
         </div>
       </div>
@@ -61,6 +61,7 @@ export default {
   height: 100vh;
   .list-box {
     height: 100%;
+    min-height: 400px; //  分类列表异步加载前预留高度
     display: flex;
     .left {
       width: 85px;
@@ -99,6 +100,7 @@ export default {
           height: 70px;
           display: block;
           margin: 5px auto;
+          aspect-ratio: 1 / 1;
         }
         p {
           text-align: center;

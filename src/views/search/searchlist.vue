@@ -112,6 +112,7 @@ export default {
 
 // 商品样式
 .goods-list {
+  min-height: 300px; // 搜索结果异步加载前预留高度
   background-color: #f6f6f6;
 }
 

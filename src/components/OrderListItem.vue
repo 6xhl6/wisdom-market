@@ -15,7 +15,7 @@
         <div class="list">
             <div class="list-item" v-for="item in order.goods" :key="item.goods_id">
                 <div class="goods-img">
-                    <img :src="item.goods_image" alt="">
+                    <img :src="item.goods_image" alt="" loading="lazy">
                 </div>
                 <div class="goods-content text-ellipsis-2">
                 {{item.goods_name}}
@@ -112,6 +112,7 @@ export default {
       img {
         width: 100%;
         height: 100%;
+        aspect-ratio: 1 / 1;
       }
     }
     .goods-content {
