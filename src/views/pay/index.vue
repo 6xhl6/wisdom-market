@@ -151,8 +151,17 @@ export default {
     }
   },
   async created () {
-    await this.getAddressList()
-    await this.getOrderInfo()
+    const [addrResult, orderResult] = await Promise.allSettled([
+      this.getAddressList(),
+      this.getOrderInfo()
+    ])
+    if (addrResult.status === 'rejected') {
+      this.address_list = []
+    }
+    if (orderResult.status === 'rejected') {
+      this.order = {}
+      this.personal_info = {}
+    }
   },
   computed: {
     default_address () {

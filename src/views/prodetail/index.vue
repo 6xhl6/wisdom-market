@@ -150,25 +150,36 @@ export default {
   },
   methods: {
     async loadDetail () {
-      const res = await getGoodsDetail(this.goodsId)
-      this.goodsData = res.data.detail
+      const [goodsRes, commentRes, totalRes, serviceRes] = await Promise.allSettled([
+        getGoodsDetail(this.goodsId),
+        getCommentList(this.goodsId, 5),
+        getCommentTotal(this.goodsId),
+        getGoodsService(this.goodsId)
+      ])
 
-      // LCP 优化：API 响应后立即预加载首张轮播图
-      const firstImage = this.goodsData.goods_images?.[0]?.external_url
-      if (firstImage) {
-        const link = document.createElement('link')
-        link.rel = 'preload'
-        link.as = 'image'
-        link.href = firstImage
-        document.head.appendChild(link)
+      if (goodsRes.status === 'fulfilled') {
+        this.goodsData = goodsRes.value.data.detail
+
+        // LCP 优化：API 响应后立即预加载首张轮播图
+        const firstImage = this.goodsData.goods_images?.[0]?.external_url
+        if (firstImage) {
+          const link = document.createElement('link')
+          link.rel = 'preload'
+          link.as = 'image'
+          link.href = firstImage
+          document.head.appendChild(link)
+        }
       }
 
-      const commentRes = await getCommentList(this.goodsId, 5)
-      this.commentList = commentRes.data.list
-      const totalRes = await getCommentTotal(this.goodsId)
-      this.commentTotal = totalRes.data.total
-      const serviceRes = await getGoodsService(this.goodsId)
-      this.serviceList = serviceRes.data.list
+      if (commentRes.status === 'fulfilled') {
+        this.commentList = commentRes.value.data.list
+      }
+      if (totalRes.status === 'fulfilled') {
+        this.commentTotal = totalRes.value.data.total
+      }
+      if (serviceRes.status === 'fulfilled') {
+        this.serviceList = serviceRes.value.data.list
+      }
     },
     isStockEnough () {
       const isEnough = this.stock >= this.buy_num
